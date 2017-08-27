@@ -34,7 +34,7 @@ class Simulator(object):
         'gray'    : (155, 155, 155)
     }
 
-    def __init__(self, env, size=None, update_delay=2.0, display=True, log_metrics=False, optimized=False):
+    def __init__(self, env, size=None, update_delay=2.0, display=True, log_metrics=False, optimized=False, log_name=None):
         self.env = env
         self.size = size if size is not None else ((self.env.grid_size[0] + 1) * self.env.block_size, (self.env.grid_size[1] + 2) * self.env.block_size)
         self.width, self.height = self.size
@@ -86,13 +86,17 @@ class Simulator(object):
         # Setup metrics to report
         self.log_metrics = log_metrics
         self.optimized = optimized
+        self.log_name = log_name
         
         if self.log_metrics:
             a = self.env.primary_agent
 
             # Set log files
             if a.learning:
-                if self.optimized: # Whether the user is optimizing the parameters and decay functions
+                if self.log_name:
+                    self.log_filename = os.path.join("logs", self.log_name + ".csv")
+                    self.table_filename = os.path.join("logs", self.log_name + ".txt")
+                elif self.optimized: # Whether the user is optimizing the parameters and decay functions
                     self.log_filename = os.path.join("logs", "sim_improved-learning.csv")
                     self.table_filename = os.path.join("logs","sim_improved-learning.txt")
                 else: 
@@ -108,7 +112,7 @@ class Simulator(object):
             self.log_writer = csv.DictWriter(self.log_file, fieldnames=self.log_fields)
             self.log_writer.writeheader()
 
-    def run(self, tolerance=0.05, n_test=0):
+    def run(self, tolerance=0.05, n_training=20, n_test=0):
         """ Run a simulation of the environment. 
 
         'tolerance' is the minimum epsilon necessary to begin testing (if enabled)
@@ -129,7 +133,7 @@ class Simulator(object):
 
             # Flip testing switch
             if not testing:
-                if total_trials > 20: # Must complete minimum 20 training trials
+                if total_trials > n_training: # Must complete minimum n_training training trials
                     if a.learning:
                         if a.epsilon < tolerance: # assumes epsilon decays to 0
                             testing = True
@@ -234,11 +238,24 @@ class Simulator(object):
                 f.write("| State-action rewards from Q-Learning\n")
                 f.write("\-----------------------------------------\n\n")
 
+                # TODO: function taking Q-dict and returning if optimal or not.
+                # 1: Check for unique action, what action is it?
+                # 2: See if unique action is the optimal action
+                # 3: Require all states to be optimal.
+
+                # TODO: function to return optimal action given state
+                # 1: If green, take waypoint action
+                # 2: If going right, with red lights, and left car isn't travelling forward: take the 'right' action
+                # 3: Else take None action.
+
                 for state in a.Q:
                     f.write("{}\n".format(state))
                     for action, reward in a.Q[state].iteritems():
                         f.write(" -- {} : {:.2f}\n".format(action, reward))
-                    f.write("\n")  
+                    f.write("\n")
+
+
+
                 self.table_file.close()
 
             self.log_file.close()

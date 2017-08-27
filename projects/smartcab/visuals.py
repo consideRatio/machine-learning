@@ -60,7 +60,7 @@ def calculate_reliability(data):
 			return ("F", "red")
 
 
-def plot_trials(csv):
+def plot_trials(csv, print_instead_of_plot=False):
 	""" Plots the data from logged metrics during a simulation."""
 
 	data = pd.read_csv(os.path.join("logs", csv))
@@ -91,6 +91,14 @@ def plot_trials(csv):
 	# Create training and testing subsets
 	training_data = data[data['testing'] == False]
 	testing_data = data[data['testing'] == True]
+
+	if print_instead_of_plot:
+		if len(testing_data) > 0:
+			safety_rating, safety_color = calculate_safety(testing_data)
+			reliability_rating, reliability_color = calculate_reliability(testing_data)
+			print('Safety / Reliability: {} {}'.format(safety_rating, reliability_rating))
+
+		return
 
 	plt.figure(figsize=(12,8))
 
