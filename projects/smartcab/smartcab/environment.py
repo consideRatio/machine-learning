@@ -283,10 +283,13 @@ class Environment(object):
 
         # Reward scheme
         # First initialize reward uniformly random from [-1, 1]
-        reward = 2 * random.random() - 1
+        #reward = 2 * random.random() - 1
+        reward = 0
 
         # Create a penalty factor as a function of remaining deadline
         # Scales reward multiplicatively from [0, 1]
+        # NOTE: This isn't correct as far as I understand...
+        #       The penalty is subtracted from the reward.
         fnc = self.t * 1.0 / (self.t + state['deadline']) if agent.primary_agent else 0.0
         gradient = 10
         
@@ -331,14 +334,15 @@ class Environment(object):
         # Did the agent attempt a valid move?
         if violation == 0:
             if action == agent.get_next_waypoint(): # Was it the correct action?
-                reward += 2 - penalty # (2, 1)
+                reward += 2 - penalty # (2, 1) --- NOTE: Net reward: (3, 0)
+                # Green and turned the correct way, or red and turned right.
             elif action == None and light != 'green' and agent.get_next_waypoint() == 'right':
                 # valid action but incorrect (idling at red light, when we should have gone right on red)
-                reward += 1 - penalty # (1, 0)
+                reward += 1 - penalty # (1, 0) --- NOTE: Net reward: (2, -1)
             elif action == None and light != 'green': # Was the agent stuck at a red light?
-                reward += 2 - penalty # (2, 1)
-            else: # Valid but incorrect
-                reward += 1 - penalty # (1, 0)
+                reward += 2 - penalty # (2, 1) --- NOTE: Net reward: (3, 0)
+            else: # Valid but incorrect - Went the wrong direction
+                reward += 1 - penalty # (1, 0) --- NOTE: Net reward: (2, -1)
 
             # Move the agent
             if action is not None:
