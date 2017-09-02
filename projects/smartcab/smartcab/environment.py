@@ -324,7 +324,7 @@ class Environment(object):
                     violation = 4 # Accident
                 elif inputs['oncoming'] == 'right': # Oncoming car turning right
                     violation = 4 # Accident
-            else:# Green light
+            else: # Green light
                 if inputs['oncoming'] == 'right' or inputs['oncoming'] == 'forward': # Incoming traffic
                     violation = 3 # Accident
                 else: # Valid move!
@@ -339,22 +339,31 @@ class Environment(object):
 
         # Agent wants to perform no action:
         elif action == None:
-            if light == 'green': 
-                violation = 1 # Minor violation
+            if light == 'green':
+                if (agent.get_next_waypoint() == 'left' and inputs['oncoming'] != 'right' and inputs['oncoming'] != 'forward'):
+                    pass
+                else:
+                    violation = 1 # Minor violation
 
 
         # Did the agent attempt a valid move?
         if violation == 0:
-            if action == agent.get_next_waypoint(): # Was it the correct action?
-                reward += 2 - penalty # (2, 1) --- NOTE: Net reward: (3, 0)
-                # Agent moved towards the waypoint meanwhile following the laws and no traffic disturbed the action.
-            elif action == None and light != 'green' and agent.get_next_waypoint() == 'right':
-                # valid action but incorrect (idling at red light, when we should have gone right on red)
-                reward += 1 - penalty # (1, 0) --- NOTE: Net reward: (2, -1)
-            elif action == None and light != 'green': # Was the agent stuck at a red light?
-                reward += 2 - penalty # (2, 1) --- NOTE: Net reward: (3, 0)
-            else: # Valid but incorrect - Went the wrong direction
-                reward += 1 - penalty # (1, 0) --- NOTE: Net reward: (2, -1)
+            # Agent moved wihtout violations or accidents towards the waypoint.
+            if action == agent.get_next_waypoint():
+                reward += 2 - penalty # (2, 1) (3, 0)
+            # Agent moved wihtout violations or accidents, but not towards the waypoint.
+            elif action != None:
+                reward += 1 - penalty # (1, 0) (2, -1)
+            else:
+                if light == 'green':
+                    # Agent waited on incoming traffic in order to make a left turn.
+                    reward += 2 - penalty # (2, 1) (3, 0)
+                else:
+                    if agent.get_next_waypoint() == 'right' and inputs['left'] != 'forward':
+                        # Agent incorrectly idled at a red light.
+                        reward += 1 - penalty # (1, 0) (2, -1)
+                    else: # Agent correctly idled at a red light.
+                        reward += 2 - penalty # (2, 1) (3, 0)
 
             # Move the agent
             if action is not None:
