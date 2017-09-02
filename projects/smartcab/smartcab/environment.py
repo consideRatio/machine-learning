@@ -32,7 +32,8 @@ class Environment(object):
     valid_headings = [(1, 0), (0, -1), (-1, 0), (0, 1)]  # E, N, W, S
     hard_time_limit = -100  # Set a hard time limit even if deadline is not enforced.
 
-    def __init__(self, verbose=False, num_dummies=100, grid_size = (8, 6)):
+    def __init__(self, verbose=False, num_dummies=100, grid_size = (8, 6), optimized_env=False):
+        self.optimized_env = optimized_env
         self.num_dummies = num_dummies  # Number of dummy driver agents in the environment
         self.verbose = verbose # If debug output should be given
 
@@ -283,8 +284,11 @@ class Environment(object):
 
         # Reward scheme
         # First initialize reward uniformly random from [-1, 1]
-        #reward = 2 * random.random() - 1
-        reward = 0
+        reward = 2 * random.random() - 1
+        # NOTE: Why would you have this random reward structure??!
+        #       Please read my two replies here in order for a justification of my change.
+        #       1: https://discussions.udacity.com/t/is-there-a-reason-that-the-reward-has-a-random-portion-in-it/327823/7?u=erik.i.sundelldbt6
+        #       2: https://discussions.udacity.com/t/is-there-a-reason-that-the-reward-has-a-random-portion-in-it/327823/9?u=erik.i.sundelldbt6
 
         # Create a penalty factor as a function of remaining deadline
         # Scales reward multiplicatively from [0, 1]
@@ -299,6 +303,11 @@ class Environment(object):
         # If the deadline is enforced, give a penalty based on time remaining
         if self.enforce_deadline:
             penalty = (math.pow(gradient, fnc) - 1) / (gradient - 1)
+
+        # NOTE: Running optimized, alpha can be one and you can run full exploit mode...
+        if self.optimized_env:
+            reward = 0
+            penalty = 0
 
         # Agent wants to drive forward:
         if action == 'forward':
@@ -338,7 +347,7 @@ class Environment(object):
         if violation == 0:
             if action == agent.get_next_waypoint(): # Was it the correct action?
                 reward += 2 - penalty # (2, 1) --- NOTE: Net reward: (3, 0)
-                # Green and turned the correct way, or red and turned right.
+                # Agent moved towards the waypoint meanwhile following the laws and no traffic disturbed the action.
             elif action == None and light != 'green' and agent.get_next_waypoint() == 'right':
                 # valid action but incorrect (idling at red light, when we should have gone right on red)
                 reward += 1 - penalty # (1, 0) --- NOTE: Net reward: (2, -1)
