@@ -8,7 +8,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5, agent_type=None, n_training=20, lower_bound=0.01):
+    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5, agent_type=None, n_training=20, lower_bound=0.01, optimized_env=False):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -23,6 +23,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
+        self.optimized_env = optimized_env
         self.training_trials = 0
         self.testing_trials = 0
 
@@ -128,7 +129,10 @@ class LearningAgent(Agent):
         # 2nd attempt: Apparently one should ignore oncoming traffic when the lights are green and just act...
         #state = (waypoint, inputs['light'])
         # 3rd attempt: But apparently only ignore oncoming traffic then, not when travelling right with a red light.
-        state = (waypoint, inputs['light'], inputs['left'])
+        #state = (waypoint, inputs['light'], inputs['left'])
+        # 4th attempt: But apparently this was fixxed, as my initial interpretation was correct and the environment was faulty, and fixxed
+        #              in this commit: https://github.com/udacity/machine-learning/commit/912f9edbb2c6647039cf71c42f0f075d842b273e
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
 
         return state
 
@@ -156,8 +160,13 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         # Then, for each action available, set the initial Q-value to 0.0
+        initial_Q = 0
+
+        if self.optimized_env:
+            initial_Q = 10
+
         if self.learning and not self.Q.has_key(state):
-            self.Q[state] = {action:10 for action in self.env.valid_actions}
+            self.Q[state] = {action:initial_Q for action in self.env.valid_actions}
 
         return
 
@@ -223,9 +232,29 @@ class LearningAgent(Agent):
         self.learn(state, action, reward)   # Q-learn
 
         return
+
+
+    def get_optimal_action(self, state):
+        """ Returns the optimal policy action for a given state, based on hardcoded theory. """
+
+        waypoint = state[0]
+        light = state[1]
+        oncoming = state[2]
+        left = state[3]
+
+        if light == 'green':
+            action = waypoint
+            if waypoint == 'left' and (oncoming == 'forward' or oncoming == 'right'):
+                action = None
+        else:
+            action = None
+            if waypoint == 'right' and not left == 'forward':
+                action = 'right'
+        
+        return action
         
 
-def run(agent_type=None, n_training=20, n_test=10, tolerance=0.05, epsilon=1, alpha=0.5, lower_bound=0.05, enforce_deadline=False):
+def run(agent_type=None, n_training=20, n_test=10, tolerance=0.05, epsilon=1, alpha=0.5, lower_bound=0.05, enforce_deadline=False, optimized_env=False):
     """ Driving function for running the simulation. 
         Press ESC to close the simulation, or [SPACE] to pause the simulation. """
 
@@ -235,7 +264,7 @@ def run(agent_type=None, n_training=20, n_test=10, tolerance=0.05, epsilon=1, al
     #   verbose     - set to True to display additional output from the simulation
     #   num_dummies - discrete number of dummy agents in the environment, default is 100
     #   grid_size   - discrete number of intersections (columns, rows), default is (8, 6)
-    env = Environment()
+    env = Environment(optimized_env=optimized_env)
     
     ##############
     # Create the driving agent
@@ -243,7 +272,7 @@ def run(agent_type=None, n_training=20, n_test=10, tolerance=0.05, epsilon=1, al
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, agent_type=agent_type, n_training=n_training, epsilon=epsilon, alpha=alpha)
+    agent = env.create_agent(LearningAgent, learning=True, agent_type=agent_type, n_training=n_training, epsilon=epsilon, alpha=alpha, optimized_env=optimized_env)
     
     ##############
     # Follow the driving agent
@@ -259,7 +288,7 @@ def run(agent_type=None, n_training=20, n_test=10, tolerance=0.05, epsilon=1, al
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
     #   log_name     - set to change the log file name
-    sim = Simulator(env, update_delay=0.001, display=False, log_metrics=True, log_name='sim_'+agent_type+'_train-'+str(n_training)+'_test-'+str(n_test)+'_alpha-'+str(alpha)+'_enforce-deadline-'+str(enforce_deadline))
+    sim = Simulator(env, update_delay=0.001, display=False, log_metrics=True, optimized_env=optimized_env, log_name='sim_'+agent_type+'_train-'+str(n_training)+'_test-'+str(n_test)+'_alpha-'+str(alpha)+'_enforce-deadline-'+str(enforce_deadline)+'_optimized-env-'+str(optimized_env))
     
     ##############
     # Run the simulator
@@ -278,25 +307,24 @@ if __name__ == '__main__':
     if False:
         run(agent_type='exploit-1')
     else:
-        enforce_deadlines = [False]
-        agents = ['exploit-5', 'explore-5']
-        # agents = ['explore-4', 'explore-3', 'explore-2', 'explore-1', 'neutral', 'exploit-1', 'exploit-2', 'exploit-3', 'exploit-4']
-
-        n_training = [100]
-        n_test = [10]
+        agents = ['exploit-5'] # agents = ['explore-4', 'explore-3', 'explore-2', 'explore-1', 'neutral', 'exploit-1', 'exploit-2', 'exploit-3', 'exploit-4']
+        enforce_deadlines = [True]
+        optimized_env = [True]
+        n_training = [100, 250, 500, 1000]
+        n_test = [100]
         alpha = [1]
         tolerance = 2
         lower_bound = 0.01
 
-        for ed in enforce_deadlines:
-            for a in alpha:
-                for t in n_test:
-                    for n in n_training:
-                        for agent in agents:
-                            print "Starting simulation of '{}', with n_training: {}, n_test: {}, tolerance: {}".format(agent, n_training, n_test, tolerance)
-                            run(agent_type=agent, n_training=n, n_test=t, alpha=a, tolerance=tolerance, lower_bound=lower_bound, enforce_deadline=ed)
-                            print "Finished simulation of '{}', with n_training: {}, n_test: {}, tolerance: {}".format(agent, n_training,
-                                                                                                       n_test, tolerance)
+        for o in optimized_env:
+            for ed in enforce_deadlines:
+                for a in alpha:
+                    for t in n_test:
+                        for n in n_training:
+                            for agent in agents:
+                                print "Starting simulation of '{}', with n_training: {}, n_test: {}, tolerance: {}".format(agent, n_training, n_test, tolerance)
+                                run(agent_type=agent, n_training=n, n_test=t, alpha=a, tolerance=tolerance, lower_bound=lower_bound, enforce_deadline=ed, optimized_env=o)
+                                print "Finished simulation of '{}', with n_training: {}, n_test: {}, tolerance: {}".format(agent, n_training, n_test, tolerance)
 
 # high Q inits, deterministic rewards
 # -> alpha 1, exploit-5

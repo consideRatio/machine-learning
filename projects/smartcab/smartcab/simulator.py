@@ -34,7 +34,9 @@ class Simulator(object):
         'gray'    : (155, 155, 155)
     }
 
-    def __init__(self, env, size=None, update_delay=2.0, display=True, log_metrics=False, optimized=False, log_name=None):
+    def __init__(self, env, size=None, update_delay=2.0, display=True, log_metrics=False, optimized=False, log_name=None, optimized_env=False):
+        self.optimized_env = optimized_env
+
         self.env = env
         self.size = size if size is not None else ((self.env.grid_size[0] + 1) * self.env.block_size, (self.env.grid_size[1] + 2) * self.env.block_size)
         self.width, self.height = self.size
@@ -234,8 +236,15 @@ class Simulator(object):
             if a.learning:
                 f = self.table_file
                 
+                unexplored_state_actions = 0
+                for state in a.Q:
+                    for action, reward in a.Q[state].iteritems():
+                        if (self.optimized_env and reward == 10) or (not self.optimized_env and reward == 0):
+                            unexplored_state_actions += 1
+
                 f.write("/-----------------------------------------\n")
                 f.write("| State-action rewards from Q-Learning\n")
+                f.write("| States: {}, state actions: {}, unexplored state actions: {}\n".format(len(a.Q.keys()), 4*len(a.Q.keys()), unexplored_state_actions))
                 f.write("\-----------------------------------------\n\n")
 
                 # TODO: function taking Q-dict and returning if optimal or not.
@@ -248,13 +257,25 @@ class Simulator(object):
                 # 2: If going right, with red lights, and left car isn't travelling forward: take the 'right' action
                 # 3: Else take None action.
 
-                for state in a.Q:
-                    f.write("{}\n".format(state))
-                    for action, reward in a.Q[state].iteritems():
-                        f.write(" -- {} : {:.2f}\n".format(action, reward))
-                    f.write("\n")
+                for state in sorted(a.Q.keys()):
+                    values_array = ['{}:{:5.2f}'.format(str(action)[0].upper(), reward) for action, reward in a.Q[state].iteritems()]
+                    values = ', '.join(values_array)
+                    
+                    maxQ = max(a.Q[state].values())
+                    maxQ_actions = [action for (action, Q) in a.Q[state].iteritems() if Q == maxQ]
+                    if len(maxQ_actions) > 1:
+                        best_action = '??'
+                    else:
+                        best_action = maxQ_actions[0]
+                        optimal_action = a.get_optimal_action(state)
+                        
+                        best_action_str = str(best_action)[0].upper()
+                        if best_action == optimal_action:
+                            best_action_str += "!"
+                        else:
+                            best_action_str += " "
 
-
+                    f.write("{} : {:45} {}\n".format(best_action_str, state, values))
 
                 self.table_file.close()
 
