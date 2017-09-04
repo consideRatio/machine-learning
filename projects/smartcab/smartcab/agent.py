@@ -307,10 +307,10 @@ if __name__ == '__main__':
     if False:
         run(agent_type='exploit-1')
     else:
-        agents = ['exploit-5'] # agents = ['explore-4', 'explore-3', 'explore-2', 'explore-1', 'neutral', 'exploit-1', 'exploit-2', 'exploit-3', 'exploit-4']
+        agents = ['exploit-5'] # agents = ['explore-5', 'explore-4', 'explore-3', 'explore-2', 'explore-1', 'neutral', 'exploit-1', 'exploit-2', 'exploit-3', 'exploit-4', 'exploit-5']
         enforce_deadlines = [True]
         optimized_env = [True]
-        n_training = [100, 250, 500, 1000]
+        n_training = [1000]
         n_test = [100]
         alpha = [1]
         tolerance = 2
