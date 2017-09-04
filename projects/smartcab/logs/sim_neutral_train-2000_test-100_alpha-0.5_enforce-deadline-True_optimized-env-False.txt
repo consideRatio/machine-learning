@@ -1,0 +1,101 @@
+/-----------------------------------------
+| State-action rewards from Q-Learning
+| States: 96, state actions: 384, unexplored state actions: 2
+\-----------------------------------------
+
+F! : ('forward', 'green', None, None)              F: 1.41, R: 1.20, N:-5.03, L: 0.82
+F! : ('forward', 'green', None, 'forward')         F: 1.77, R: 0.84, N:-5.10, L: 1.22
+F! : ('forward', 'green', None, 'left')            F: 2.11, R: 0.78, N:-4.79, L: 1.10
+F! : ('forward', 'green', None, 'right')           F: 1.77, R: 0.77, N:-5.34, L: 0.54
+F! : ('forward', 'green', 'forward', None)         F: 2.05, R: 0.65, N:-5.16, L:-20.68
+F! : ('forward', 'green', 'forward', 'forward')    F: 2.29, R: 0.62, N:-4.78, L:-20.02
+F! : ('forward', 'green', 'forward', 'left')       F: 2.52, R: 0.45, N:-4.86, L:-20.18
+F! : ('forward', 'green', 'forward', 'right')      F: 1.86, R: 0.77, N:-4.78, L:-20.26
+F! : ('forward', 'green', 'left', None)            F: 2.34, R: 1.11, N:-5.21, L: 0.73
+F! : ('forward', 'green', 'left', 'forward')       F: 1.31, R: 0.42, N:-4.67, L: 0.65
+F! : ('forward', 'green', 'left', 'left')          F: 1.81, R: 0.83, N:-5.06, L: 0.46
+F! : ('forward', 'green', 'left', 'right')         F: 1.95, R: 0.31, N:-5.13, L: 0.46
+F! : ('forward', 'green', 'right', None)           F: 2.84, R: 1.17, N:-4.72, L:-20.15
+F! : ('forward', 'green', 'right', 'forward')      F: 1.61, R: 0.65, N:-4.49, L:-19.41
+F! : ('forward', 'green', 'right', 'left')         F: 1.60, R: 0.53, N:-4.82, L:-19.14
+F! : ('forward', 'green', 'right', 'right')        F: 1.89, R: 0.77, N:-3.60, L:-19.31
+N! : ('forward', 'red', None, None)                F:-24.62, R: 0.68, N: 1.37, L:-24.98
+N! : ('forward', 'red', None, 'forward')           F:-39.97, R:-19.87, N: 1.45, L:-40.31
+N! : ('forward', 'red', None, 'left')              F:-24.89, R: 0.78, N: 2.17, L:-11.14
+N! : ('forward', 'red', None, 'right')             F:-14.22, R: 0.78, N: 2.03, L:-25.31
+N! : ('forward', 'red', 'forward', None)           F:-9.92, R: 0.67, N: 1.60, L:-10.34
+N! : ('forward', 'red', 'forward', 'forward')      F:-39.74, R:-20.16, N: 1.62, L:-40.38
+N! : ('forward', 'red', 'forward', 'left')         F:-9.81, R: 0.59, N: 2.11, L:-13.87
+N! : ('forward', 'red', 'forward', 'right')        F:-29.35, R: 0.60, N: 1.63, L:-17.69
+N! : ('forward', 'red', 'left', None)              F:-10.35, R: 0.80, N: 1.65, L:-10.01
+N! : ('forward', 'red', 'left', 'forward')         F:-40.00, R:-19.46, N: 2.17, L:-39.80
+N! : ('forward', 'red', 'left', 'left')            F:-25.51, R: 0.39, N: 2.04, L:-9.91
+N! : ('forward', 'red', 'left', 'right')           F:-17.22, R: 1.10, N: 2.36, L:-10.19
+N! : ('forward', 'red', 'right', None)             F:-24.71, R: 0.82, N: 1.39, L:-40.63
+N! : ('forward', 'red', 'right', 'forward')        F:-38.67, R:-19.76, N: 2.41, L:-40.27
+N! : ('forward', 'red', 'right', 'left')           F:-32.19, R: 0.38, N: 2.18, L:-40.48
+N! : ('forward', 'red', 'right', 'right')          F:-8.60, R: 1.28, N: 1.59, L:-39.16
+L! : ('left', 'green', None, None)                 F: 1.10, R: 1.01, N:-4.71, L: 1.47
+L! : ('left', 'green', None, 'forward')            F: 0.61, R: 0.60, N:-5.42, L: 2.17
+L! : ('left', 'green', None, 'left')               F: 0.48, R: 0.51, N:-4.64, L: 1.68
+L! : ('left', 'green', None, 'right')              F: 0.60, R: 1.34, N:-5.34, L: 2.16
+R  : ('left', 'green', 'forward', None)            F: 0.81, R: 1.40, N: 1.23, L:-20.29
+N! : ('left', 'green', 'forward', 'forward')       F: 1.22, R: 0.80, N: 2.05, L:-19.59
+N! : ('left', 'green', 'forward', 'left')          F: 0.71, R: 1.22, N: 1.66, L:-20.15
+N! : ('left', 'green', 'forward', 'right')         F: 0.70, R: 0.66, N: 1.65, L:-20.08
+L! : ('left', 'green', 'left', None)               F: 0.47, R: 0.83, N:-5.61, L: 2.04
+L! : ('left', 'green', 'left', 'forward')          F: 1.07, R: 1.13, N:-5.19, L: 1.25
+L! : ('left', 'green', 'left', 'left')             F: 0.56, R: 0.53, N:-5.25, L: 1.57
+L! : ('left', 'green', 'left', 'right')            F: 0.35, R: 1.38, N:-5.16, L: 2.24
+N! : ('left', 'green', 'right', None)              F: 0.39, R: 1.09, N: 1.97, L:-19.99
+N! : ('left', 'green', 'right', 'forward')         F: 1.23, R: 0.82, N: 1.96, L:-20.02
+N! : ('left', 'green', 'right', 'left')            F: 0.56, R: 0.93, N: 1.68, L:-20.45
+N! : ('left', 'green', 'right', 'right')           F: 0.93, R: 0.83, N: 2.06, L:-14.81
+N! : ('left', 'red', None, None)                   F:-11.77, R: 0.67, N: 1.17, L:-11.53
+N! : ('left', 'red', None, 'forward')              F:-39.97, R:-19.52, N: 2.17, L:-39.35
+N! : ('left', 'red', None, 'left')                 F:-12.24, R: 0.54, N: 1.96, L:-26.69
+N! : ('left', 'red', None, 'right')                F:-12.33, R: 0.96, N: 2.37, L:-9.74
+N! : ('left', 'red', 'forward', None)              F:-10.32, R: 1.02, N: 2.09, L:-10.33
+N! : ('left', 'red', 'forward', 'forward')         F:-39.62, R:-19.88, N: 1.53, L:-39.21
+N! : ('left', 'red', 'forward', 'left')            F:-25.45, R: 0.93, N: 1.54, L:-25.51
+N! : ('left', 'red', 'forward', 'right')           F:-15.27, R: 0.67, N: 2.23, L:-9.80
+N! : ('left', 'red', 'left', None)                 F:-10.45, R: 0.61, N: 2.30, L:-10.80
+N! : ('left', 'red', 'left', 'forward')            F:-40.30, R:-20.20, N: 2.13, L:-40.49
+N! : ('left', 'red', 'left', 'left')               F:-9.77, R: 1.08, N: 1.32, L:-13.86
+N! : ('left', 'red', 'left', 'right')              F:-9.74, R: 0.47, N: 2.21, L:-10.49
+N! : ('left', 'red', 'right', None)                F:-11.33, R: 1.22, N: 1.91, L:-40.50
+N! : ('left', 'red', 'right', 'forward')           F:-39.55, R:-20.31, N: 1.53, L:-39.76
+N! : ('left', 'red', 'right', 'left')              F:-15.37, R: 0.95, N: 1.78, L:-39.32
+N! : ('left', 'red', 'right', 'right')             F:-23.71, R: 0.84, N: 1.10, L:-38.85
+R! : ('right', 'green', None, None)                F: 0.74, R: 2.34, N:-5.17, L: 0.93
+R! : ('right', 'green', None, 'forward')           F: 0.76, R: 1.57, N:-5.30, L: 0.87
+R! : ('right', 'green', None, 'left')              F: 0.87, R: 2.08, N:-4.41, L: 0.56
+R! : ('right', 'green', None, 'right')             F: 0.90, R: 1.67, N:-4.91, L: 0.86
+R! : ('right', 'green', 'forward', None)           F: 0.37, R: 2.00, N:-5.51, L:-19.83
+R! : ('right', 'green', 'forward', 'forward')      F: 1.34, R: 1.93, N:-5.52, L:-19.82
+R! : ('right', 'green', 'forward', 'left')         F: 0.95, R: 1.88, N:-5.01, L:-20.43
+R! : ('right', 'green', 'forward', 'right')        F: 0.66, R: 1.86, N:-4.97, L:-19.47
+R! : ('right', 'green', 'left', None)              F: 0.65, R: 1.99, N:-4.95, L: 0.83
+R! : ('right', 'green', 'left', 'forward')         F: 0.64, R: 2.36, N:-4.78, L: 0.77
+R! : ('right', 'green', 'left', 'left')            F: 0.76, R: 2.61, N:-5.11, L: 0.49
+R! : ('right', 'green', 'left', 'right')           F: 0.08, R: 2.50, N:-5.36, L: 1.11
+R! : ('right', 'green', 'right', None)             F: 0.39, R: 2.56, N:-5.03, L:-19.93
+R! : ('right', 'green', 'right', 'forward')        F: 0.43, R: 2.27, N:-5.42, L:-19.56
+R! : ('right', 'green', 'right', 'left')           F: 0.72, R: 1.37, N:-4.74, L:-20.06
+R! : ('right', 'green', 'right', 'right')          F: 0.00, R: 1.38, N:-4.03, L:-17.85
+R! : ('right', 'red', None, None)                  F:-14.57, R: 1.82, N: 0.78, L:-14.12
+N! : ('right', 'red', None, 'forward')             F:-40.31, R:-20.41, N: 1.32, L:-40.03
+R! : ('right', 'red', None, 'left')                F:-25.44, R: 1.52, N: 0.58, L:-10.11
+R! : ('right', 'red', None, 'right')               F:-9.26, R: 2.35, N: 0.77, L:-9.91
+R! : ('right', 'red', 'forward', None)             F:-10.91, R: 2.48, N: 0.95, L:-9.91
+N! : ('right', 'red', 'forward', 'forward')        F:-39.43, R:-20.35, N: 1.97, L:-40.25
+R! : ('right', 'red', 'forward', 'left')           F:-10.03, R: 1.82, N: 0.76, L:-9.86
+R! : ('right', 'red', 'forward', 'right')          F:-25.06, R: 2.21, N: 0.49, L:-17.38
+R! : ('right', 'red', 'left', None)                F:-9.63, R: 1.82, N: 1.11, L:-32.77
+N! : ('right', 'red', 'left', 'forward')           F:-39.41, R:-20.52, N: 1.70, L:-39.89
+R! : ('right', 'red', 'left', 'left')              F:-11.32, R: 2.32, N: 0.61, L:-19.57
+R! : ('right', 'red', 'left', 'right')             F:-25.67, R: 1.65, N: 0.67, L:-11.56
+R! : ('right', 'red', 'right', None)               F:-10.07, R: 1.42, N: 0.38, L:-40.20
+N! : ('right', 'red', 'right', 'forward')          F:-37.57, R:-19.03, N: 2.21, L:-39.13
+R! : ('right', 'red', 'right', 'left')             F:-10.41, R: 1.70, N: 0.38, L:-40.25
+R! : ('right', 'red', 'right', 'right')            F: 0.00, R: 2.32, N: 1.34, L:-29.62
