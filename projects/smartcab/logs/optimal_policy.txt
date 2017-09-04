@@ -1,7 +1,11 @@
 /-----------------------------------------
 | State-action rewards from Q-Learning
 | States: 96, state actions: 384, unexplored state actions: 0
+| State tuple: (waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
 \-----------------------------------------
+
+NOTE: The letters N, F, L and R to the left represents the recommended action for the given state
+      and ! means that the action matches my theoretical optimal policy.
 
 F! : ('forward', 'green', None, None)              F: 2.00, R: 1.00, N:-5.00, L: 1.00
 F! : ('forward', 'green', None, 'forward')         F: 2.00, R: 1.00, N:-5.00, L: 1.00

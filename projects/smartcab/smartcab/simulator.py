@@ -247,16 +247,7 @@ class Simulator(object):
                 f.write("| States: {}, state actions: {}, unexplored state actions: {}\n".format(len(a.Q.keys()), 4*len(a.Q.keys()), unexplored_state_actions))
                 f.write("\-----------------------------------------\n\n")
 
-                # TODO: function taking Q-dict and returning if optimal or not.
-                # 1: Check for unique action, what action is it?
-                # 2: See if unique action is the optimal action
-                # 3: Require all states to be optimal.
-
-                # TODO: function to return optimal action given state
-                # 1: If green, take waypoint action
-                # 2: If going right, with red lights, and left car isn't travelling forward: take the 'right' action
-                # 3: Else take None action.
-
+                # TODO: Something is messy, whenever two values are alike, best_action becomes N... and optimal_action equals best_action.
                 for state in sorted(a.Q.keys()):
                     values_array = ['{}:{:5.2f}'.format(str(action)[0].upper(), reward) for action, reward in a.Q[state].iteritems()]
                     values = ', '.join(values_array)
